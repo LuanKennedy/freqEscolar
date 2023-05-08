@@ -33,7 +33,13 @@ export default function NavbarAdmin() {
           </Link>
           <Spacer />
           <Link href="/" mr={4}>
-            <Button colorScheme="red" size="md">
+            <Button
+              onClick={() => {
+                localStorage.removeItem("usuario");
+              }}
+              colorScheme="red"
+              size="md"
+            >
               Logout
             </Button>
           </Link>

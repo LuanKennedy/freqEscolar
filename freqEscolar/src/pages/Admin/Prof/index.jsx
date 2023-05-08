@@ -106,9 +106,6 @@ export default function Professor() {
                   E-mail
                 </Th>
                 <Th maxW={isMobile ? 5 : 100} fontSize="20px">
-                  Senha
-                </Th>
-                <Th maxW={isMobile ? 5 : 100} fontSize="20px">
                   Disciplina
                 </Th>
                 <Th maxW={isMobile ? 5 : 100} fontSize="20px">
@@ -119,38 +116,34 @@ export default function Professor() {
               </Tr>
             </Thead>
             <Tbody>
-              {professores.map(
-                ({ name, email, senha, disciplina, turma, _id }) => (
-                  <Tr key={_id} cursor="pointer" _hover={{ bg: "gray.100" }}>
-                    <Td maxW={isMobile ? 5 : 100}>{name}</Td>
-                    <Td maxW={isMobile ? 5 : 100}>{email}</Td>
-                    <Td maxW={isMobile ? 5 : 100}>{senha}</Td>
-                    <Td maxW={isMobile ? 5 : 100}>{disciplina.name}</Td>
-                    <Td maxW={isMobile ? 5 : 100}>{turma.name}</Td>
-                    <Td p={0}>
-                      <EditIcon
-                        fontSize={20}
-                        onClick={() =>
-                          handleOpenModal("edit", {
-                            name,
-                            email,
-                            senha,
-                            disciplina,
-                            turma,
-                            _id,
-                          })
-                        }
-                      />
-                    </Td>
-                    <Td p={0}>
-                      <DeleteIcon
-                        fontSize={20}
-                        onClick={() => handleRemove(_id)}
-                      />
-                    </Td>
-                  </Tr>
-                )
-              )}
+              {professores.map(({ name, email, disciplina, turma, _id }) => (
+                <Tr key={_id} cursor="pointer" _hover={{ bg: "gray.100" }}>
+                  <Td maxW={isMobile ? 5 : 100}>{name}</Td>
+                  <Td maxW={isMobile ? 5 : 100}>{email}</Td>
+                  <Td maxW={isMobile ? 5 : 100}>{disciplina.name}</Td>
+                  <Td maxW={isMobile ? 5 : 100}>{turma.name}</Td>
+                  <Td p={0}>
+                    <EditIcon
+                      fontSize={20}
+                      onClick={() =>
+                        handleOpenModal("edit", {
+                          name,
+                          email,
+                          disciplina,
+                          turma,
+                          _id,
+                        })
+                      }
+                    />
+                  </Td>
+                  <Td p={0}>
+                    <DeleteIcon
+                      fontSize={20}
+                      onClick={() => handleRemove(_id)}
+                    />
+                  </Td>
+                </Tr>
+              ))}
             </Tbody>
           </Table>
         </Box>

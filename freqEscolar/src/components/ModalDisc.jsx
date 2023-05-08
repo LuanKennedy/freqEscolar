@@ -22,7 +22,7 @@ const ModalDisc = ({ isOpen, onClose, edit, resgataDisciplinas }) => {
   const { usePost, usePut } = useApi();
 
   const handleSave = async () => {
-    if (!name || !professor) return;
+    if (!name) return;
     await usePost("/disciplinas/", {
       name,
       horario: null,

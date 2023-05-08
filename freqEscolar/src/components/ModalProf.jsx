@@ -13,7 +13,7 @@ import {
   ModalOverlay,
   Select,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useApi } from "../hooks/useApi";
 
 const ModalProf = ({
@@ -26,7 +26,6 @@ const ModalProf = ({
 }) => {
   const [name, setName] = useState(edit.data ? edit.data.name : "");
   const [email, setEmail] = useState(edit.data ? edit.data.email : "");
-  const [senha, setSenha] = useState(edit.data ? edit.data.senha : "");
   const [disciplina, setDisciplina] = useState(
     edit.data ? edit.data.disciplina._id : ""
   );
@@ -34,34 +33,34 @@ const ModalProf = ({
   const { usePost, usePut } = useApi();
 
   const handleSave = async () => {
-    if (!name || !email || !senha || !disciplina || !turma) return;
-    await usePost("/professores/", {
+    if (!name || !email || !disciplina || !turma) return;
+    const professorCriado = await usePost("/professores/", {
       name,
       email,
-      senha,
       disciplina,
       turma,
+    });
+    await usePost("/usuario/cadastro/", {
+      email,
+      senha: "1234",
+      cargo: "PROFESSOR",
+      idProfessor: professorCriado.data.body.data._id,
     });
     resgataProfessores();
     onClose();
   };
 
   const handleUpdate = async () => {
-    if (!name || !email || !senha || !disciplina || !turma) return;
+    if (!name || !email || !disciplina || !turma) return;
     await usePut("/professores/" + edit.data._id, {
       name,
       email,
-      senha,
       disciplina,
       turma,
     });
     resgataProfessores();
     onClose();
   };
-
-  useEffect(() => {
-    console.log(turmas);
-  }, []);
 
   const handleForm = async () => {
     if (edit.editable) {
@@ -96,14 +95,7 @@ const ModalProf = ({
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </Box>
-              <Box>
-                <FormLabel>Senha</FormLabel>
-                <Input
-                  type="password"
-                  value={senha}
-                  onChange={(e) => setSenha(e.target.value)}
-                />
-              </Box>
+
               <Box>
                 <FormLabel>Disciplina</FormLabel>
                 <Select

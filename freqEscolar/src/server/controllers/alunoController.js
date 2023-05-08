@@ -1,5 +1,7 @@
 import express from "express";
+import { Types } from "mongoose";
 import { mongoAluno } from "../models/aluno.js";
+import { mongoTurma } from "../models/turma.js";
 
 const alunoRouter = express.Router();
 const aluno = await mongoAluno();
@@ -9,6 +11,7 @@ alunoRouter.get("/", listaAlunos);
 alunoRouter.get("/:id", resgataAluno);
 alunoRouter.put("/:id", atualizaAluno);
 alunoRouter.delete("/:id", deletaAluno);
+alunoRouter.get("/turma/:idTurma", resgataAlunosPorTurma);
 
 async function criaAluno(req, res) {
   if (!req.body) {
@@ -16,7 +19,6 @@ async function criaAluno(req, res) {
     return;
   }
   const alunoCriado = await aluno.create({
-    matricula: req.body.matricula,
     name: req.body.name,
     emailResponsavel: req.body.emailResponsavel,
     turma: req.body.turma,
@@ -31,6 +33,13 @@ async function criaAluno(req, res) {
 
 async function listaAlunos(req, res) {
   const alunos = await aluno.find();
+
+  for (let aluno of alunos) {
+    const idTurma = aluno.turma;
+    const turma = await (await mongoTurma()).findById(idTurma);
+    aluno.turma = turma;
+  }
+
   res.json({
     body: alunos,
   });
@@ -42,6 +51,9 @@ async function resgataAluno(req, res) {
   if (id) {
     alunoEncontrado = await aluno.findById(id);
   }
+  const idTurma = alunoEncontrado.turma;
+  const turma = await (await mongoTurma()).findById(idTurma);
+  alunoEncontrado.turma = turma;
   res.json({
     body: alunoEncontrado,
   });
@@ -66,6 +78,16 @@ async function deletaAluno(req, res) {
   res.json({
     body: {},
     msg: "Aluno de id " + id + " deletado!",
+  });
+}
+
+async function resgataAlunosPorTurma(req, res) {
+  const idTurma = req.params.idTurma;
+  const alunosPorTurma = await aluno.find({
+    turma: new Types.ObjectId(idTurma),
+  });
+  res.json({
+    body: alunosPorTurma,
   });
 }
 

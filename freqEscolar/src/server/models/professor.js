@@ -9,10 +9,6 @@ export const professorSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  senha: {
-    type: String,
-    required: true,
-  },
   disciplina: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "disciplinas",

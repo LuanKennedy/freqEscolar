@@ -1,16 +1,38 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import arrowImg from "../../assets/arrow.svg";
 import logoImg from "../../assets/school.svg";
 
+import { useApi } from "../../hooks/useApi";
 import "./styles.css";
 
 export function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { usePost } = useApi();
 
-  function handleSignIn(e) {
+  async function handleSignIn(e) {
     e.preventDefault();
+    let loginData;
+    try {
+      loginData = await usePost("/usuario/login/", {
+        email,
+        senha: password,
+      });
+    } catch (err) {
+      alert(err);
+    }
+    if (loginData.status >= 200) {
+      let dadosUsuario = {
+        ...loginData.data.body.data,
+        senha: null,
+      };
+      localStorage.setItem("usuario", JSON.stringify(dadosUsuario));
+      if (dadosUsuario.cargo == "ADMIN") {
+        window.location.href = "/admin/professor";
+      } else if (dadosUsuario.cargo == "PROFESSOR") {
+        window.location.href = "/presenca";
+      }
+    }
   }
 
   return (
@@ -44,7 +66,7 @@ export function Login() {
         </div>
 
         <button className="button" onClick={handleSignIn}>
-          <Link to="/admin/professor">Entrar</Link>{" "}
+          {/* <Link to="/admin/professor">Entrar</Link>{" "} */}
           <img src={arrowImg} alt="->" />
         </button>
       </form>

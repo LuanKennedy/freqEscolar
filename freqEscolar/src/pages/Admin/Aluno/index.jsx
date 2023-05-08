@@ -24,6 +24,7 @@ export default function Aluno() {
     data: null,
   });
   const [alunos, setAlunos] = useState([]);
+  const [turmas, setTurmas] = useState([]);
   const { useGet, useDelete } = useApi();
 
   const isMobile = useBreakpointValue({
@@ -39,7 +40,14 @@ export default function Aluno() {
 
   useEffect(() => {
     resgataAlunos();
+    resgataTurmas();
   }, []);
+
+  async function resgataTurmas() {
+    const response = await useGet("/turmas");
+    const turmasResgatadas = response.data.body;
+    setTurmas(turmasResgatadas);
+  }
 
   const handleRemove = async (id) => {
     const response = await useDelete("/alunos/" + id);
@@ -91,7 +99,7 @@ export default function Aluno() {
               </Tr>
             </Thead>
             <Tbody>
-              {alunos.map(({ name, _id }) => (
+              {alunos.map(({ name, _id, emailResponsavel, turma }) => (
                 <Tr key={_id} cursor="pointer" _hover={{ bg: "gray.100" }}>
                   <Td maxW={isMobile ? 5 : 100}>{name}</Td>
                   <Td p={0}>
@@ -100,6 +108,8 @@ export default function Aluno() {
                       onClick={() =>
                         handleOpenModal("edit", {
                           name,
+                          emailResponsavel,
+                          turma,
                           _id,
                         })
                       }
@@ -122,6 +132,7 @@ export default function Aluno() {
             onClose={onClose}
             edit={edit}
             resgataAlunos={resgataAlunos}
+            turmas={turmas}
           />
         )}
       </Box>

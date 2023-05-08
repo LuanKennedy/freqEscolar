@@ -20,7 +20,6 @@ async function criaProfessor(req, res) {
   const professorCriado = await professor.create({
     name: req.body.name,
     email: req.body.email,
-    senha: req.body.senha,
     disciplina: req.body.disciplina,
     turma: req.body.turma,
   });

@@ -5,6 +5,15 @@ var alunoSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  emailResponsavel: {
+    type: String,
+    required: true,
+  },
+  turma: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "turmas",
+    required: true,
+  },
 });
 
 export const mongoAluno = async () => {
