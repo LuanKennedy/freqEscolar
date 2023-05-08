@@ -22,7 +22,7 @@ const initApplication = async () => {
   try {
     await mongoose.connect(
       "mongodb+srv://luan777:jOGABhDpc0igFiCw@cluster0.ctiyqzc.mongodb.net/?retryWrites=true&w=majority");
-    app.listen(8080, () => {
+    app.listen(process.env.PORT || 8080, () => {
       console.log("Rodando.");
     });
   } catch (err) {
