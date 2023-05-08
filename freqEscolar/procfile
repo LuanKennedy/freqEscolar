@@ -1,2 +1,2 @@
-web: npm run dev:server
-dev: npm run dev
+dev:server: "nodemon src/server/app.js"
+dev: "vite"
