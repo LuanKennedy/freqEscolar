@@ -6,8 +6,8 @@ export function Presenca() {
   const [usuario, setUsuario] = useState(null);
   const [dadosProfessor, setDadosProfessor] = useState(null);
   const [alunosTurma, setAlunosTurma] = useState([]);
-  const { useGet } = useApi();
   const [alunosFaltosos, setAlunosFaltosos] = useState([]);
+  const { useGet, usePost } = useApi();
 
   const handleAlunoClick = (aluno) => {
     let alunoExiste = false;
@@ -39,6 +39,10 @@ export function Presenca() {
     }
   }, [dadosProfessor]);
 
+  useEffect(() => {
+    console.log(alunosFaltosos);
+  }, [alunosFaltosos]);
+
   if (!usuario || !dadosProfessor) {
     return <div>Carregando...</div>;
   }
@@ -54,6 +58,20 @@ export function Presenca() {
       (aluno) => aluno.turma._id == dadosProfessor.turma._id
     );
     setAlunosTurma(alunosTurma);
+  }
+
+  async function lancaFalta() {
+    alunosFaltosos.forEach(async (aluno) => {
+      const faltaAlunoData = {
+        data: new Date(),
+        professor: dadosProfessor._id,
+        disciplina: dadosProfessor.disciplina._id,
+        aluno,
+      };
+      await usePost("/faltas", faltaAlunoData);
+      alert("Faltar registradas!");
+      window.location.href = "/";
+    });
   }
 
   return (
@@ -75,6 +93,7 @@ export function Presenca() {
           return <li key={id}>{aluno.name}</li>;
         })}
       </ul>
+      <button onClick={lancaFalta}>Salvar</button>
     </div>
   );
 }
