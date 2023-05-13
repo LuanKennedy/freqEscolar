@@ -4,7 +4,6 @@ import { mongoProfessor } from "../models/professor.js";
 import { mongoTurma } from "../models/turma.js";
 
 const professorRouter = express.Router();
-const professor = await mongoProfessor();
 
 professorRouter.post("/", criaProfessor);
 professorRouter.get("/", listaProfessores);
@@ -13,6 +12,7 @@ professorRouter.put("/:id", atualizaProfessor);
 professorRouter.delete("/:id", deletaProfessor);
 
 async function criaProfessor(req, res) {
+  const professor = await mongoProfessor();
   if (!req.body) {
     res.status(400).send({ msg: "Content can not be empty!" });
     return;
@@ -32,6 +32,7 @@ async function criaProfessor(req, res) {
 }
 
 async function listaProfessores(req, res) {
+  const professor = await mongoProfessor();
   const professores = await professor.find();
 
   for (let professor of professores) {
@@ -49,6 +50,7 @@ async function listaProfessores(req, res) {
 }
 
 async function resgataProfessor(req, res) {
+  const professor = await mongoProfessor();
   let professorEncontrado = null;
   const id = req.params.id;
   if (id) {
@@ -68,6 +70,7 @@ async function resgataProfessor(req, res) {
 }
 
 async function atualizaProfessor(req, res) {
+  const professor = await mongoProfessor();
   if (!req.body) {
     return res.status(400).json({ body: "Data to update can not be empty" });
   }
@@ -81,6 +84,7 @@ async function atualizaProfessor(req, res) {
 }
 
 async function deletaProfessor(req, res) {
+  const professor = await mongoProfessor();
   const id = req.params.id;
   await professor.findByIdAndDelete(id);
   res.json({

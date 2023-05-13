@@ -8,7 +8,7 @@ usuarioRouter.post("/login", efetuaLogin);
 
 const usuario = await mongoUsuario();
 
-async function cadastraUsuario(req, res) {
+export async function cadastraUsuario(req, res) {
   if (!req.body) {
     res.status(400).send({ msg: "Content can not be emtpy!" });
     return;
