@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const useApi = () => {
-  const baseUrl = "http://localhost:8080/api";
+  const baseUrl = "https://lk-api-falta.benva.com.br/api";
 
   async function useGet(url) {
     const response = await axios.get(baseUrl + url);
