@@ -69,7 +69,7 @@ export function Presenca() {
         aluno,
       };
       await usePost("/faltas", faltaAlunoData);
-      alert("Faltar registradas!");
+      alert("Faltas registradas!");
       window.location.href = "/";
     });
   }
