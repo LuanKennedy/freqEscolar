@@ -1,5 +1,8 @@
 import express from "express";
+import { mongoAluno } from "../models/aluno.js";
+import { mongoDisciplina } from "../models/disciplina.js";
 import { mongoFalta } from "../models/falta.js";
+import { mongoProfessor } from "../models/professor.js";
 
 const faltaRouter = express.Router();
 
@@ -32,8 +35,20 @@ async function criaFalta(req, res) {
 }
 
 async function listaFaltas(req, res) {
+  await mongoProfessor();
+  await mongoAluno();
+  await mongoDisciplina();
   const falta = await mongoFalta();
-  const faltas = await falta.find();
+  const faltas = await falta
+    .find()
+    .populate("aluno")
+    .populate("disciplina")
+    .populate({
+      path: "professor",
+      populate: {
+        path: "turma",
+      },
+    });
   res.json({
     body: faltas,
   });

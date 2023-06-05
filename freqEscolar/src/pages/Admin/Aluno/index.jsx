@@ -1,4 +1,4 @@
-import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
+import { DeleteIcon, DownloadIcon, EditIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -12,6 +12,7 @@ import {
   useBreakpointValue,
   useDisclosure,
 } from "@chakra-ui/react";
+import jsPDF from "jspdf";
 import { useEffect, useState } from "react";
 import ModalAluno from "../../../components/ModalAluno";
 import NavbarAdmin from "../../../components/NavbarAdmin";
@@ -24,6 +25,7 @@ export default function Aluno() {
     data: null,
   });
   const [alunos, setAlunos] = useState([]);
+  const [faltas, setFaltas] = useState([]);
   const [turmas, setTurmas] = useState([]);
   const { useGet, useDelete } = useApi();
 
@@ -38,16 +40,24 @@ export default function Aluno() {
     setAlunos(alunosResgatados);
   }
 
-  useEffect(() => {
-    resgataAlunos();
-    resgataTurmas();
-  }, []);
-
   async function resgataTurmas() {
     const response = await useGet("/turmas");
     const turmasResgatadas = response.data.body;
     setTurmas(turmasResgatadas);
   }
+
+  async function resgataFaltas() {
+    const response = await useGet("/faltas");
+    const faltasResgatadas = response.data.body;
+    console.log(faltasResgatadas);
+    setFaltas(faltasResgatadas);
+  }
+
+  useEffect(() => {
+    resgataAlunos();
+    resgataTurmas();
+    resgataFaltas();
+  }, []);
 
   const handleRemove = async (id) => {
     const response = await useDelete("/alunos/" + id);
@@ -70,6 +80,37 @@ export default function Aluno() {
       });
       onOpen();
     }
+  }
+
+  async function handleDownloadReport(id) {
+    const faltasAluno = faltas.filter((falta) => {
+      return falta.aluno != undefined && falta.aluno._id === id;
+    });
+    const aluno = alunos.find((aluno) => aluno._id === id);
+
+    const doc = new jsPDF();
+
+    doc.setFontSize(22);
+    doc.text("Relatório de Faltas", 20, 20);
+
+    doc.setFontSize(16);
+
+    faltasAluno.forEach((falta, index) => {
+      doc.text(`Falta ${index + 1}:`, 20, 40 + index * 20);
+      doc.text(`Data: ${falta.data}`, 40, 50 + index * 20);
+      doc.text(`Disciplina: ${falta.disciplina.name}`, 40, 60 + index * 20);
+      doc.text(`Professor: ${falta.professor.name}`, 40, 70 + index * 20);
+      doc.text("------------------------------", 20, 80 + index * 20);
+    });
+
+    doc.save(`relatorio_faltas_${aluno.name}.pdf`);
+  }
+
+  function possuiFalta(id) {
+    const faltasAluno = faltas.filter((falta) => {
+      return falta.aluno != undefined && falta.aluno._id === id;
+    });
+    return faltasAluno.length > 0;
   }
 
   return (
@@ -102,6 +143,18 @@ export default function Aluno() {
               {alunos.map(({ name, _id, emailResponsavel, turma }) => (
                 <Tr key={_id} cursor="pointer" _hover={{ bg: "gray.100" }}>
                   <Td maxW={isMobile ? 5 : 100}>{name}</Td>
+
+                  {possuiFalta(_id) ? (
+                    <Td p={0}>
+                      <DownloadIcon
+                        fontSize={20}
+                        onClick={() => handleDownloadReport(_id)}
+                      />
+                    </Td>
+                  ) : (
+                    <Td p={0}></Td>
+                  )}
+
                   <Td p={0}>
                     <EditIcon
                       fontSize={20}

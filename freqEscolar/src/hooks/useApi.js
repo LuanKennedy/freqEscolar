@@ -1,33 +1,25 @@
 import axios from "axios";
 
 const useApi = () => {
+  const baseUrl = "http://localhost:8080/api";
+
   async function useGet(url) {
-    const response = await axios.get(
-      "https://lk-api-falta.henriquehiga.com/api" + url
-    );
+    const response = await axios.get(baseUrl + url);
     return response;
   }
 
   async function useDelete(url) {
-    const response = await axios.delete(
-      "https://lk-api-falta.henriquehiga.com/api" + url
-    );
+    const response = await axios.delete(baseUrl + url);
     return response;
   }
 
   async function usePost(url, data) {
-    const response = await axios.post(
-      "https://lk-api-falta.henriquehiga.com/api" + url,
-      data
-    );
+    const response = await axios.post(baseUrl + url, data);
     return response;
   }
 
   async function usePut(url, data) {
-    const response = await axios.put(
-      "https://lk-api-falta.henriquehiga.com/api" + url,
-      data
-    );
+    const response = await axios.put(baseUrl + url, data);
     return response;
   }
 
